@@ -1,0 +1,1 @@
+criar um sistema de blog . Os usuários poderiam criar, editar e comentar em postagens, e haveria diferentes níveis de permissão, como administrador e usuário comum. Você também poderia implementar funcionalidades de busca e categorias para organizar os posts.
