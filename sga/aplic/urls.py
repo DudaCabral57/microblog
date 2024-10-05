@@ -6,9 +6,12 @@ from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
 
+
+
+router.register(r'postagens', PostagemViewSet)
+router.register(r'comentarios', ComentarioViewSet)
+router.register(r'categorias', CategoriaViewSet)
+
 urlpatterns = [
-    path('', IndexView.as_view(), name='index'),
-    path('teste', TesteView.as_view(), name='teste'),
-    path('sobre', SobreView .as_view(), name='sobre'),
-    path('contato', ContatoView.as_view(), name='contato'),
+    path('', include(router.urls)),
 ]

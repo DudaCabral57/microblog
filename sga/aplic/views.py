@@ -1,6 +1,39 @@
 from django.views.generic import TemplateView
 
 
+
+# blog/views.py
+from rest_framework import viewsets
+from .models import Postagem, Comentario, Categoria
+from .serializers import PostagemSerializer, ComentarioSerializer, CategoriaSerializer
+
+class PostagemViewSet(viewsets.ModelViewSet):
+    queryset = Postagem.objects.all()
+    serializer_class = PostagemSerializer
+
+class ComentarioViewSet(viewsets.ModelViewSet):
+    queryset = Comentario.objects.all()
+    serializer_class = ComentarioSerializer
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class IndexView(TemplateView):
     template_name = 'index.html'
 

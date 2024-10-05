@@ -1,9 +1,10 @@
 import uuid
-from datetime import timezone
+
 
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
+
+from django.contrib.auth.models import AbstractUser
 
 def get_file_path(_instance, filename):
     ext = filename.split('.')[-1]
@@ -11,18 +12,21 @@ def get_file_path(_instance, filename):
     return filename
 
 
-class Usuario(models.Model):
+class Usuario(models.Model, AbstractUser):
     nome = models.CharField(('Nome: '), max_length=60)
-    email = models.EmailField
-    senha = models.CharField(('Senha: '), max_length=50)
+
     telefone = models.CharField(('Telefone: '), max_length=11)
-    username = models.CharField(('Nome de usuário: '),max_length=20)
     bio = models.TextField(('Digite sua bio: '), max_length=250)
     foto_perfil = models.ImageField(('Foto de Perfil: '), upload_to=get_file_path, null=True, blank=True)
     seguidores = models.ManyToManyField('self', blank=True, related_name= 'seguidores')
     seguindo = models.ManyToManyField('self', blank=True, related_name= 'seguindo')
 
+  def __str__(self):
+        return self.username
 
+    class Meta:
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
 class Configuracao(models.Model):
     PUBLICA = 'publica'
     PRIVADA = 'privada'
@@ -63,12 +67,8 @@ class Avaliacao(models.Model):
 class Categoria(models.Model):
     nome = models.CharField
 
-
-class Comentario(models.Model):
-    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    conteudo = models.TextField(max_length=250)
-    data_criacao = models.DateTimeField(auto_now_add=True)
-    imagem = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    def __str__(self):
+        return self.nome
 
 
 class Postagem(models.Model):
@@ -79,12 +79,23 @@ class Postagem(models.Model):
     imagem = models.ImageField(upload_to=get_file_path, null=True, blank=True)
     slug = models.SlugField(unique=True, max_length=50)
 
+    def __str__(self):
+        return self.titulo
+
     def __innit__(self,usuario, conteudo):
         self.autor = usuario
         self.conteudo = conteudo
 
 
+class Comentario(models.Model):
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    conteudo = models.TextField(max_length=250)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    imagem = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    postagem = models.ForeignKey(Postagem, related_name='comentarios', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'Comentário de {self.autor.username}'
 
 class Compartilhamento(models.Model):
     post_republicado = models.CharField
@@ -100,9 +111,5 @@ class Marcacao(models.Model):
     perfil_marcando = models.CharField
     aprovacacao = models.BooleanField
 
-
-def __str__(self):
-
-    return self
-  def exibir_post(self, usuario, conteudo):
-            return f"Post de {self.usuario.username}: {self.conteudo}"
+    def exibir_post(self, usuario, conteudo):
+        return f"Post de {self.usuario.username}: {self.conteudo}"
