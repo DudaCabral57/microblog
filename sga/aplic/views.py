@@ -1,35 +1,77 @@
-from django.views.generic import TemplateView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Postagem
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Postagem
+from .forms import PostagemForm
+
+# Lista de postagens (Read - Lista)
+class PostagemListView(ListView):
+    model = Postagem
+    template_name = 'aplic/postagem_list.html'
+    context_object_name = 'postagens'
+
+# Detalhes de uma postagem (Read - Detalhes)
+class PostagemDetailView(DetailView):
+    model = Postagem
+    template_name = 'aplic/postagem_detail.html'
+    context_object_name = 'postagem'
+
+# Criação de nova postagem (Create)
+class PostagemCreateView(CreateView):
+    model = Postagem
+    form_class = PostagemForm
+    template_name = 'aplic/postagem_form.html'
+    success_url = reverse_lazy('postagem-list')
+
+# Atualização de uma postagem (Update)
+class PostagemUpdateView(UpdateView):
+    model = Postagem
+    form_class = PostagemForm
+    template_name = 'aplic/postagem_form.html'
+    success_url = reverse_lazy('postagem-list')
+
+# Deleção de uma postagem (Delete)
+class PostagemDeleteView(DeleteView):
+    model = Postagem
+    template_name = 'aplic/postagem_confirm_delete.html'
+    success_url = reverse_lazy('postagem-list')
 
 
+# Lista de postagens (Read - Lista)
+class PostagemListView(ListView):
+    model = Postagem
+    template_name = 'aplic/postagem_list.html'
+    context_object_name = 'postagens'
 
-# blog/views.py
-from rest_framework import viewsets
-from .models import Postagem, Comentario, Categoria
-from .serializers import PostagemSerializer, ComentarioSerializer, CategoriaSerializer
+# Detalhes de uma postagem (Read - Detalhes)
+class PostagemDetailView(DetailView):
+    model = Postagem
+    template_name = 'aplic/postagem_detail.html'
+    context_object_name = 'postagem'
 
-class PostagemViewSet(viewsets.ModelViewSet):
-    queryset = Postagem.objects.all()
-    serializer_class = PostagemSerializer
+# Criação de nova postagem (Create)
+class PostagemCreateView(CreateView):
+    model = Postagem
+    form_class = PostagemForm
+    template_name = 'aplic/postagem_form.html'
+    success_url = reverse_lazy('postagem-list')
 
-class ComentarioViewSet(viewsets.ModelViewSet):
-    queryset = Comentario.objects.all()
-    serializer_class = ComentarioSerializer
+# Atualização de uma postagem (Update)
+class PostagemUpdateView(UpdateView):
+    model = Postagem
+    form_class = PostagemForm
+    template_name = 'aplic/postagem_form.html'
+    success_url = reverse_lazy('postagem-list')
 
-class CategoriaViewSet(viewsets.ModelViewSet):
-    queryset = Categoria.objects.all()
-    serializer_class = CategoriaSerializer
-
-
-
-
-
-
-
-
-
-
-
-
+# Deleção de uma postagem (Delete)
+class PostagemDeleteView(DeleteView):
+    model = Postagem
+    template_name = 'aplic/postagem_confirm_delete.html'
+    success_url = reverse_lazy('postagem-list')
 
 
 
