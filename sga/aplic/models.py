@@ -1,12 +1,12 @@
 import uuid
 from django.db import models
-<<<<<<< HEAD
+
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 from django.utils.translation import gettext_lazy as _
 
+from microblog.sga.aplic.models import Avaliacao
 
-=======
-from django.contrib.auth.models import AbstractUser
->>>>>>> f7e6bf78dc6d9302aa00ca902028a7a09a6175b5
 
 def get_file_path(_instance, filename):
     ext = filename.split('.')[-1]
@@ -14,10 +14,10 @@ def get_file_path(_instance, filename):
     return filename
 
 
-<<<<<<< HEAD
-class Usuario(models.Model):
-    nome = models.CharField('Nome: ', max_length=60)
-    email = models.EmailField('Email: ', max_length=254)
+class Usuario(AbstractBaseUser,BaseUserManager, PermissionsMixin):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    email = models.EmailField(unique=True)
     senha = models.CharField('Senha: ', max_length=50)
     telefone = models.CharField('Telefone: ', max_length=11)
     username = models.CharField('Nome de usuário: ', max_length=20)
@@ -26,22 +26,15 @@ class Usuario(models.Model):
     seguidores = models.ManyToManyField('self', blank=True, related_name='seguidores')
     seguindo = models.ManyToManyField('self', blank=True, related_name='seguindo')
 
+    USERNAME_FIELD = ['Username']
+    REQUIRED_FIELDS = ['nome']
+
     def __str__(self):
         return self.username
 
-=======
-class Usuario(models.Model, AbstractUser):
-    nome = models.CharField(('Nome: '), max_length=60)
-    telefone = models.CharField(('Telefone: '), max_length=11)
-    bio = models.TextField(('Digite sua bio: '), max_length=250)
-    foto_perfil = models.ImageField(('Selecione sua foto de Perfil: '), upload_to=get_file_path, null=True, blank=True)
-    seguidores = models.ManyToManyField('self', blank=True, related_name= 'seguidores')
-    seguindo = models.ManyToManyField('self', blank=True, related_name= 'seguindo')
-
-
-def __innit__(self, nome, email):
-    self.nome = nome
-    self.email = email
+    def __innit__(self, nome, email):
+        self.nome = nome
+        self.email = email
 
 
 def exibir_dados(self):
@@ -53,7 +46,24 @@ class Meta:
     verbose_name_plural = 'Usuários'
 
 
->>>>>>> f7e6bf78dc6d9302aa00ca902028a7a09a6175b5
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, nome, password=None):
+        if not email:
+            raise ValueError('O campo email é obrigatório.')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, nome=nome)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, nome, password=None):
+        user = self.create_user(email, nome, password)
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
 class Configuracao(models.Model):
     PUBLICA = 'publica'
     PRIVADA = 'privada'
@@ -83,7 +93,6 @@ class Notificacao(models.Model):
     def __str__(self):
         return f"Notificação para {self.usuario.username}: {self.mensagem[:20]}..."
 
-
     def __innit__(self, usuario_destino, usuario_origem, postagem):
         self.usuario_origem = usuario_origem
         self.usuario_destino = usuario_destino
@@ -100,22 +109,9 @@ class Avaliacao(models.Model):
     like = models.BooleanField(default=False)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
 
-
-class Conteudo(models.Model):
-    titulo = models.CharField(max_length=200)
-    descricao = models.TextField()
-
-    def __str__(self):
-        return self.titulo
-
-
-class Conteudo(models.Model):
-    titulo = models.CharField(max_length=200)
-    descricao = models.TextField()
-
-    def __str__(self):
-        return self.titulo
-
+    class Meta:
+        model = Avaliacao
+        fields = ['campo1', 'campo2', 'campo3']
     @property
     def total_likes(self):
         return self.avaliacao.filter(like=True).count()
@@ -123,7 +119,6 @@ class Conteudo(models.Model):
     @property
     def total_dislikes(self):
         return self.avaliacao.filter(like=False).count()
-
 
     def __str__(self):
         tipo_avaliacao = "Like" if self.like else "Dislike"
@@ -136,6 +131,15 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+
+class Conteudo(models.Model):
+    titulo = models.CharField(max_length=255)
+    descricao = models.TextField()
+    categorias = models.ManyToManyField(Categoria, related_name='conteudos', blank=True)
+    imagem = models.ImageField(upload_to='imagens/', blank=True, null=True)
+
+    def __str__(self):
+        return self.titulo
 
 class Comentario(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -155,8 +159,8 @@ class Postagem(models.Model):
     def __str__(self):
         return f"Postagem de {self.autor.username}: {self.titulo}"
 
-<<<<<<< HEAD
-=======
+
+
     def __innit__(self, usuario, conteudo):
         self.autor = usuario
         self.conteudo = conteudo
@@ -171,7 +175,7 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f'Comentário de {self.autor.username}'
->>>>>>> f7e6bf78dc6d9302aa00ca902028a7a09a6175b5
+
 
 
 class Compartilhamento(models.Model):

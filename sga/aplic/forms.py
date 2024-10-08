@@ -2,33 +2,30 @@ from django import forms
 
 from .models import Postagem, Usuario, Configuracao, Comentario, Categoria, Compartilhamento, Notificacao, Marcacao, Avaliacao, Conteudo, Relato
 from django.contrib.auth.models import User
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import Usuario
 
-
-class CustomUserCreationForm(Usuario):
+class CustomUserCreationForm(UserCreationForm):
     class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'is_staff')
+        model = Usuario  # Isso se refere ao modelo de usuário que você criou
+        fields = ('email', 'first_name', 'last_name')  # Ajuste os campos de acordo com o seu modelo
 
-
-class CustomUserChangeForm(Usuario):
+class CustomUserChangeForm(UserChangeForm):
     class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
-
+        model = Usuario
+        fields = ('email', 'first_name', 'last_name')  # Ajuste os campos de acordo com o seu modelo
 
 class PostagemForm(forms.ModelForm):
     class Meta:
-        model = Postagem
-        fields = ['titulo', 'conteudo', 'imagem']
+        model = Postagem  # Supondo que haja um modelo Postagem
+        fields = '__all__'
 
 
 class ConteudoForm(forms.ModelForm):
     class Meta:
         model = Conteudo
-        fields = ['titulo', 'descricao', 'imagem', 'categorias']
-        widgets = {
-            'descricao': forms.Textarea(attrs={'rows': 4, 'cols': 20}),
-        }
+        fields = ['titulo', 'descricao', 'categorias', 'imagem']
 
 
 class AvaliacaoForm(forms.ModelForm):
