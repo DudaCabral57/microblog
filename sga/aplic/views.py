@@ -4,8 +4,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from django.urls import reverse_lazy
 
-f
-
+from sga.urls import urlpatterns
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 

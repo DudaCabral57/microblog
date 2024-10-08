@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 from django.utils.translation import gettext_lazy as _
 
-from microblog.sga.aplic.models import Avaliacao
+
 
 
 def get_file_path(_instance, filename):
@@ -109,9 +109,6 @@ class Avaliacao(models.Model):
     like = models.BooleanField(default=False)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        model = Avaliacao
-        fields = ['campo1', 'campo2', 'campo3']
     @property
     def total_likes(self):
         return self.avaliacao.filter(like=True).count()
@@ -123,6 +120,7 @@ class Avaliacao(models.Model):
     def __str__(self):
         tipo_avaliacao = "Like" if self.like else "Dislike"
         return f'{tipo_avaliacao} de {self.usuario.username} para o conteúdo: {self.conteudo[:20]}...'
+
 
 
 class Categoria(models.Model):

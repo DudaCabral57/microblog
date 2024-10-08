@@ -26,6 +26,7 @@ class ConteudoForm(forms.ModelForm):
     class Meta:
         model = Conteudo
         fields = ['titulo', 'descricao', 'categorias', 'imagem']
+        exclude = ['campo_excluido']
 
 
 class AvaliacaoForm(forms.ModelForm):
@@ -39,7 +40,10 @@ class AvaliacaoForm(forms.ModelForm):
         ]
 
         nota = forms.ChoiceField(choices=NOTA_CHOICES, widget=forms.RadioSelect)
-
+    class Meta:
+            model = Conteudo
+            fields = ['titulo', 'descricao', 'categorias', 'imagem']
+            exclude = ['campo_excluido']
 
 class RelatoForm(forms.ModelForm):
     class Meta:
@@ -53,4 +57,4 @@ class RelatoForm(forms.ModelForm):
 class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
-        fields = ['nome', 'descricao']
+        fields = ['nome']
