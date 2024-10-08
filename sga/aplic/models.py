@@ -2,10 +2,13 @@ import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
+
 def get_file_path(_instance, filename):
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4()}.{ext}'
     return filename
+
 
 class Usuario(models.Model):
     nome = models.CharField('Nome: ', max_length=60)
@@ -40,18 +43,52 @@ class Configuracao(models.Model):
     bloqueados = models.TextField(blank=True, null=True)
     silenciados = models.TextField(blank=True, null=True)
 
+
 class Notificacao(models.Model):
-    conteudo_notif = models.TextField()
-    data_recebimento = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    mensagem = models.TextField()
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    lida = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notificação para {self.usuario.username}: {self.mensagem[:20]}..."
+
 
 class Avaliacao(models.Model):
-    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    data_aval = models.DateTimeField(auto_now_add=True)
-    perfil_aval = models.CharField(max_length=100)
-    positiva_negativa = models.BooleanField()
-    reportar_post = models.CharField(max_length=100)
-    contador_aval_positiva = models.IntegerField(default=0)
-    contador_aval_negativa = models.IntegerField(default=0)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='avaliacoes')
+    conteudo = models.TextField()  #
+    like = models.BooleanField(default=False)
+    data_avaliacao = models.DateTimeField(auto_now_add=True)
+
+
+class Conteudo(models.Model):
+    titulo = models.CharField(max_length=200)
+    descricao = models.TextField()
+
+    def __str__(self):
+        return self.titulo
+
+
+class Conteudo(models.Model):
+    titulo = models.CharField(max_length=200)
+    descricao = models.TextField()
+
+    def __str__(self):
+        return self.titulo
+
+    @property
+    def total_likes(self):
+        return self.avaliacao.filter(like=True).count()
+
+    @property
+    def total_dislikes(self):
+        return self.avaliacao.filter(like=False).count()
+
+
+    def __str__(self):
+        tipo_avaliacao = "Like" if self.like else "Dislike"
+        return f'{tipo_avaliacao} de {self.usuario.username} para o conteúdo: {self.conteudo[:20]}...'
+
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=50)
@@ -59,11 +96,13 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Comentario(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     conteudo = models.TextField(max_length=250)
     data_criacao = models.DateTimeField(auto_now_add=True)
     imagem = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+
 
 class Postagem(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -76,6 +115,7 @@ class Postagem(models.Model):
     def __str__(self):
         return f"Postagem de {self.autor.username}: {self.titulo}"
 
+
 class Compartilhamento(models.Model):
     post_republicado = models.ForeignKey(Postagem, on_delete=models.CASCADE)
     perfil_postando = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="perfil_postando")
@@ -83,7 +123,18 @@ class Compartilhamento(models.Model):
     data_repost = models.DateTimeField(auto_now_add=True)
     contador_compartilhamento = models.IntegerField(default=0)
 
+
 class Marcacao(models.Model):
     perfil_marcado = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="perfil_marcado")
     perfil_marcando = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="perfil_marcando")
-    aprovacao = models.BooleanField()
+    aprovacao = models.BooleanField(default=False)
+
+
+class Relato(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='relatos')
+    conteudo = models.ForeignKey('Conteudo', on_delete=models.CASCADE, related_name='relatos')
+    motivo = models.TextField()
+    data_relato = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Relato de {self.usuario.username} para o conteúdo: {self.conteudo.titulo}'
