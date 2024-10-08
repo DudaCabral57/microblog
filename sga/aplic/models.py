@@ -1,8 +1,12 @@
 import uuid
 from django.db import models
+<<<<<<< HEAD
 from django.utils.translation import gettext_lazy as _
 
 
+=======
+from django.contrib.auth.models import AbstractUser
+>>>>>>> f7e6bf78dc6d9302aa00ca902028a7a09a6175b5
 
 def get_file_path(_instance, filename):
     ext = filename.split('.')[-1]
@@ -10,6 +14,7 @@ def get_file_path(_instance, filename):
     return filename
 
 
+<<<<<<< HEAD
 class Usuario(models.Model):
     nome = models.CharField('Nome: ', max_length=60)
     email = models.EmailField('Email: ', max_length=254)
@@ -24,6 +29,31 @@ class Usuario(models.Model):
     def __str__(self):
         return self.username
 
+=======
+class Usuario(models.Model, AbstractUser):
+    nome = models.CharField(('Nome: '), max_length=60)
+    telefone = models.CharField(('Telefone: '), max_length=11)
+    bio = models.TextField(('Digite sua bio: '), max_length=250)
+    foto_perfil = models.ImageField(('Selecione sua foto de Perfil: '), upload_to=get_file_path, null=True, blank=True)
+    seguidores = models.ManyToManyField('self', blank=True, related_name= 'seguidores')
+    seguindo = models.ManyToManyField('self', blank=True, related_name= 'seguindo')
+
+
+def __innit__(self, nome, email):
+    self.nome = nome
+    self.email = email
+
+
+def exibir_dados(self):
+    return f"Nome: {self.nome}, Email: {self.email}"
+
+
+class Meta:
+    verbose_name = 'Usuário'
+    verbose_name_plural = 'Usuários'
+
+
+>>>>>>> f7e6bf78dc6d9302aa00ca902028a7a09a6175b5
 class Configuracao(models.Model):
     PUBLICA = 'publica'
     PRIVADA = 'privada'
@@ -52,6 +82,16 @@ class Notificacao(models.Model):
 
     def __str__(self):
         return f"Notificação para {self.usuario.username}: {self.mensagem[:20]}..."
+
+
+    def __innit__(self, usuario_destino, usuario_origem, postagem):
+        self.usuario_origem = usuario_origem
+        self.usuario_destino = usuario_destino
+        self.postagem = postagem
+
+
+def enviar_notificacao(self):
+    return f"Nova notificação para {self.usuario_destino}:" f"{self.usuario_origem} interagiu com sua postagem: '{self.post.conteudo}"
 
 
 class Avaliacao(models.Model):
@@ -114,6 +154,24 @@ class Postagem(models.Model):
 
     def __str__(self):
         return f"Postagem de {self.autor.username}: {self.titulo}"
+
+<<<<<<< HEAD
+=======
+    def __innit__(self, usuario, conteudo):
+        self.autor = usuario
+        self.conteudo = conteudo
+
+
+class Comentario(models.Model):
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    conteudo = models.TextField(max_length=250)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    imagem = models.ImageField(upload_to=get_file_path, null=True, blank=True)
+    postagem = models.ForeignKey(Postagem, related_name='comentarios', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'Comentário de {self.autor.username}'
+>>>>>>> f7e6bf78dc6d9302aa00ca902028a7a09a6175b5
 
 
 class Compartilhamento(models.Model):
