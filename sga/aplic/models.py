@@ -14,20 +14,20 @@ def get_file_path(_instance, filename):
     return filename
 
 
-class Usuario(AbstractBaseUser,BaseUserManager, PermissionsMixin):
+class Usuario(AbstractBaseUser, BaseUserManager, PermissionsMixin):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
-    senha = models.CharField('Senha: ', max_length=50)
+    senha = models.CharField(max_length=50)
     telefone = models.CharField('Telefone: ', max_length=11)
-    username = models.CharField('Nome de usuário: ', max_length=20)
+    Username = models.CharField('Nome de usuário: ', max_length=20)
     bio = models.TextField('Digite sua bio: ', max_length=250)
     foto_perfil = models.ImageField('Foto de Perfil: ', upload_to=get_file_path, null=True, blank=True)
     seguidores = models.ManyToManyField('self', blank=True, related_name='seguidores')
     seguindo = models.ManyToManyField('self', blank=True, related_name='seguindo')
 
-    USERNAME_FIELD = ['Username']
-    REQUIRED_FIELDS = ['nome']
+    USERNAME_FIELD = 'Username'
+    REQUIRED_FIELDS = 'first_name', 'last_name', 'email', 'senha', 'telefone'
 
     def __str__(self):
         return self.username

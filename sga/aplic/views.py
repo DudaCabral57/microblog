@@ -1,15 +1,34 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
 from django.urls import reverse_lazy
 
-from sga.urls import urlpatterns
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
+from .models import Postagem, Avaliacao, Categoria, Conteudo, Relato
+from .forms import PostagemForm, RelatoForm, AvaliacaoForm, ConteudoForm, CategoriaForm
 
-from .models import Postagem, Avaliacao, Usuario, Configuracao, Comentario, Categoria, Compartilhamento, Marcacao, Notificacao, Conteudo
-from .forms import PostagemForm, CustomUserCreationForm, CustomUserChangeForm, RelatoForm, AvaliacaoForm, ConteudoForm, CategoriaForm
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.models import User
+
+
+def criar_usuario(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Seja bem vindo ao Web Focas!')
+            return redirect('login')  #
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'criar_usuario.html', {'form': form})
+
+
+def detalhes_usuario(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    return render(request, 'detalhes_usuario.html', {'usuario': usuario})
 
 
 class PostagemListView(ListView):
@@ -59,7 +78,7 @@ def detalhe_conteudo(request, conteudo_id):
         'relato_form': relato_form,
     })
 
-o
+
 def criar_conteudo(request):
     if request.method == 'POST':
         form = ConteudoForm(request.POST)
@@ -70,7 +89,7 @@ def criar_conteudo(request):
         form = ConteudoForm()
     return render(request, 'criar_conteudo.html', {'form': form})
 
-# Atualizar um conteúdo existente
+
 def atualizar_conteudo(request, conteudo_id):
     conteudo = get_object_or_404(Conteudo, id=conteudo_id)
     if request.method == 'POST':
@@ -105,10 +124,12 @@ def reportar_post(request, conteudo_id):
         form = RelatoForm(initial={'conteudo': conteudo})
     return render(request, 'reportar_post.html', {'form': form, 'conteudo': conteudo})
 
-# Listar todos os relatos
+
 def listar_relatos(request):
     relatos = Relato.objects.all()
     return render(request, 'listar_relatos.html', {'relatos': relatos})
+
+
 def criar_avaliacao(request, conteudo_id):
     conteudo = get_object_or_404(Conteudo, id=conteudo_id)
     if request.method == 'POST':
@@ -134,7 +155,7 @@ def listar_categorias(request):
     categorias = Categoria.objects.all()
     return render(request, 'listar_categorias.html', {'categorias': categorias})
 
-# Criar nova categoria
+
 def criar_categoria(request):
     if request.method == 'POST':
         form = CategoriaForm(request.POST)
