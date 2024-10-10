@@ -20,7 +20,7 @@ class Usuario(AbstractBaseUser, BaseUserManager, PermissionsMixin):
     email = models.EmailField(unique=True)
     senha = models.CharField(max_length=50)
     telefone = models.CharField('Telefone: ', max_length=11)
-    Username = models.CharField('Nome de usuário: ', max_length=20)
+    Username = models.CharField(max_length=150, unique=True, verbose_name='Nome de usuário')
     bio = models.TextField('Digite sua bio: ', max_length=250)
     foto_perfil = models.ImageField('Foto de Perfil: ', upload_to=get_file_path, null=True, blank=True)
     seguidores = models.ManyToManyField('self', blank=True, related_name='seguidores')

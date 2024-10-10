@@ -7,7 +7,7 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm, PostagemForm
 
 
 class PostagemAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'autor', 'data_criacao', 'publicado')
+    list_display = ('titulo', 'autor', 'data_criacao')
     list_filter = ('autor', 'data_criacao')
     search_fields = ('titulo', 'conteudo')
     ordering = ('-data_criacao')
@@ -15,7 +15,7 @@ class PostagemAdmin(admin.ModelAdmin):
 
 @admin.register(Postagem)
 class PostagemAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'autor', 'data_criacao', 'publicado')
+    list_display = ('titulo', 'autor', 'data_criacao')
     list_filter = ('autor', 'data_criacao')
     search_fields = ('titulo', 'conteudo')
     ordering = ('-data_criacao',)
@@ -24,7 +24,7 @@ class PostagemAdmin(admin.ModelAdmin):
 @admin.register(Comentario)
 class ComentarioAdmin(admin.ModelAdmin):
     list_display = ('postagem', 'autor', 'data_comentario')
-    list_filter = ('autor', 'data_comentario')
+    list_filter = ('autor', )
     search_fields = ('conteudo',)
 
 
@@ -38,10 +38,9 @@ class CategoriaAdmin(admin.ModelAdmin):
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_active')
+    list_display = ('Username', 'email', 'first_name', 'last_name',)
     search_fields = ('username', 'email', 'first_name', 'last_name')
-    ordering = ('username',)
+    ordering = ('Username',)
 
 
 admin.site.unregister(Usuario)
@@ -56,13 +55,7 @@ class UsuarioInline(admin.StackedInline):
 
 @admin.register(Configuracao)
 class ConfiguracaoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'curso')
-
-
-@admin.register(Marcacao)
-class MarcacaoAdmin(admin.ModelAdmin):
-    list_display = ('nome',)
-    search_fields = ('nome',)
+    list_display = ('PUBLICA', 'PRIVADA', 'preferencias', 'notificacao')
 
 
 class CompartilhamentoAdmin(admin.ModelAdmin):
@@ -89,11 +82,6 @@ class AvaliacaoAdmin(admin.ModelAdmin):
 
     conteudo_resumido.short_description = 'Conteúdo Avaliado'
 
-
-@admin.register(Conteudo)
-class ConteudoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'total_likes', 'total_dislikes')
-    search_fields = ('titulo',)
 
 
 @admin.register(Notificacao)
