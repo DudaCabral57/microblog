@@ -23,7 +23,7 @@ class PostagemAdmin(admin.ModelAdmin):
 
 @admin.register(Comentario)
 class ComentarioAdmin(admin.ModelAdmin):
-    list_display = ('postagem', 'autor', 'data_comentario')
+    list_display = ('postagem', 'autor')
     list_filter = ('autor', )
     search_fields = ('conteudo',)
 
